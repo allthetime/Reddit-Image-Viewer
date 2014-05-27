@@ -1,0 +1,264 @@
+<html>
+<head>
+<style>
+*{margin:0;}
+body{background:#000;margin:20px;}
+img{box-shadow:0px 1px 200px -1px #444;position:absolute;margin:auto;left:0;right:0;top:0;bottom:0;}
+.wrap{position:relative;width:100%;height:100%;}
+#load{box-shadow:0 0 0 0 #000;width:40px;height:40px;opacity:0.4}
+#title{position:absolute;top:0;left:40px;z-index:1000;color:white;font-family:Arial;font-size:15px;text-shadow:0 0 1px #000;}
+#legend{text-align:justify;position:absolute;bottom:0;left:0;right:0;margin:auto;width:60%;z-index:1000;color:white;font-family:Arial;font-size:3px;text-shadow:0 0 1px #000;}
+#legend:hover{font-size:12px;background:black;opacity:0.8;transition:0.5s ease;padding:20px;}
+span:hover{color:red}
+form{position:absolute;left:40px;top:25px;z-index:2000}
+form input{background:black;color:white;border:1px solid white;border-radius:5px;width:50px;text-align:center;}
+
+</style>
+</head>
+<body>
+
+
+
+
+<script type="text/javascript">
+function handleKeyPress(e,form){
+var key=e.keyCode || e.which;
+if (key==13){
+e.preventDefault();
+  i = form.num.value-1
+      next();
+
+}
+}
+</script>
+
+
+<SCRIPT Language="JavaScript">
+<!--//
+
+
+
+function chng(frm){
+  if (frm.num.value == "")
+      alert("nothing == Nothing")
+  else
+      i = frm.num.value-1
+      next();
+      frm.num.value = ""
+}
+//-->
+</SCRIPT>
+
+
+<div class="wrap">
+<div id="title">SUBREDDITIMGVIEWER</div>
+
+<FORM NAME="test">
+<INPUT TYPE="TEXT" NAME="num" value="#"  onkeypress="handleKeyPress(event,this.form)">&nbsp;
+<INPUT TYPE="Button" Value="GO" onClick="chng(this.form)" style="width:30px;">
+</FORM>
+
+
+
+<img id="tI" src="" style="height:85%;opacity:0;">
+<img id="bL" src="blank.gif" style="display:none;">
+<img id="load" src="loading.gif">
+<!--<div id="legend"></div>-->
+</div>
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+<script>
+
+var req = new XMLHttpRequest();
+var req1 = new XMLHttpRequest();
+var req2 = new XMLHttpRequest();
+var req3 = new XMLHttpRequest();
+
+var tI = document.getElementById("tI");
+var loader = document.getElementById("load");
+var bL = document.getElementById("bL");
+var title = document.getElementById("title");
+var legend = document.getElementById("legend");
+
+//legend.addEventListener('click', function(e){i=parseInt(e.target.id.split('r')[1])-1;next();},false)
+
+var subred = prompt("Subreddit?","fifthworldpics");
+
+if (subred!=null)
+  {
+  xy = 'http://www.reddit.com/r/'+subred+'/hot.json?limit=100';
+} 
+
+
+function rqr(x,y){
+x.open('GET', y, false); 
+x.send(null);
+if(x.status == 0)
+dump(x.responseText);
+}
+
+rqr(req,xy);
+
+var json = req.responseText,
+    obj = JSON.parse(json);
+
+console.log(obj.data.after);
+
+z1 = 'http://www.reddit.com/r/'+subred+'/hot.json?limit=100&after='+obj.data.after+'';
+
+rqr(req1,z1);
+
+var json1 = req1.responseText,
+    obj1 = JSON.parse(json1);
+
+z2 = 'http://www.reddit.com/r/'+subred+'/hot.json?limit=100&after='+obj1.data.after+'';
+
+rqr(req2,z2);
+
+var json2 = req2.responseText,
+    obj2 = JSON.parse(json2);
+
+z3 = 'http://www.reddit.com/r/'+subred+'/hot.json?limit=100&after='+obj2.data.after+'';
+
+rqr(req3,z3);
+
+var json3 = req3.responseText,
+    obj3 = JSON.parse(json3);
+
+
+// function cleanUp(url) {
+//    if(url.search(/^https?\:\/\//) != -1)
+//        url = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i, "");
+//    else
+ //       url = url.match(/^([^\/?#]+)(?:[\/?#]|$)/i, "");
+//    return url[1];
+//}
+
+var imgs = {};
+var titles = {};
+var j = 0;
+
+function imgCheck(x,i){
+    cII = x.data.children[i].data.url;
+    check = (/\.(gif|jpg|jpeg|tiff|png)$/i).test(cII);
+    if (check == true){
+        imgs[j] = x.data.children[i].data.url;
+        titles[j] = x.data.children[i].data.title
+     // legend.innerHTML+='<span id="r'+j+'">'+j+' </span>'
+        j+=1;
+    }
+   // else{   
+  //  if (cleanUp(cII)=="imgur.com" || cleanUp(cII)=="i.imgur.com"){console.log(cleanUp(cII));
+    
+  //  imgs[j] = x.data.children[i].data.url+'.jpg';
+  //  titles[j] = x.data.children[i].data.title
+  //  legend.innerHTML+='<span id="r'+j+'">'+j+' </span>'
+  //  j+=1;
+    
+  //  }
+  //  } 
+}
+
+for (i in obj.data.children){
+imgCheck(obj,i)
+}
+for (i in obj1.data.children){
+imgCheck(obj1,i)
+}
+for (i in obj2.data.children){
+imgCheck(obj2,i)
+}
+for (i in obj3.data.children){
+imgCheck(obj3,i)
+}
+
+
+var i = 0;
+
+bL.src=imgs[i];
+
+bL.onload = function(){
+    tI.src=imgs[i];
+    title.innerHTML=''+titles[i]+' - '+i+'/'+j;
+    TweenMax.fromTo(tI,1,{autoAlpha:0},{autoAlpha:1});
+    TweenMax.to(loader,1,{autoAlpha:0});
+}
+
+function next(){
+	i += 1; 
+    TweenMax.to(tI,5,{autoAlpha:0});
+    TweenMax.to(loader,1,{autoAlpha:0.4});
+    bL.src=imgs[i];
+    if (i > j-1){
+        i=0;
+        bL.src=imgs[0]
+        bL.onload = function(){
+            tI.src=imgs[0];
+            title.innerHTML=''+titles[i]+' - '+i+'/'+j;
+            TweenMax.fromTo(tI,1,{autoAlpha:0},{autoAlpha:1});
+            TweenMax.to(loader,1,{autoAlpha:0});
+        }
+    }
+    else{
+        bL.onload = function(){
+            TweenMax.to(bL,100,{opacity:1});
+            tI.src=imgs[i];
+            title.innerHTML=''+titles[i]+' - '+i+'/'+j;
+            TweenMax.fromTo(tI,1,{autoAlpha:0},{autoAlpha:1});
+            TweenMax.to(loader,1,{autoAlpha:0});
+            }
+     }
+ }
+
+  function last(){
+ 	i -= 1; 
+    TweenMax.to(tI,5,{autoAlpha:0});
+    TweenMax.to(loader,1,{autoAlpha:0.4});
+    bL.src=imgs[i];
+    if (i < 0){
+        i=j-1;
+        bL.src=imgs[i]
+        bL.onload = function(){
+            tI.src=imgs[i];
+            title.innerHTML=''+titles[i]+' - '+i+'/'+j;
+            TweenMax.fromTo(tI,1,{autoAlpha:0},{autoAlpha:1});
+            TweenMax.to(loader,1,{autoAlpha:0});
+        }    
+    }
+    else{
+        bL.onload = function(){
+            tI.src=imgs[i];
+            title.innerHTML=''+titles[i]+' - '+i+'/'+j;
+            TweenMax.fromTo(tI,1,{autoAlpha:0},{autoAlpha:1});
+            TweenMax.to(loader,1,{autoAlpha:0});
+        }
+    }
+}
+
+
+
+tI.addEventListener('click',next,false)
+
+document.body.onkeydown = function(event){
+    event = event || window.event;
+    var keycode = event.charCode || event.keyCode;
+    if(keycode === 37){
+        last();
+        }
+    else if(keycode === 39){
+        next();
+    }
+}
+
+</script>
+</body>
+</html>
