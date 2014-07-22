@@ -98,6 +98,7 @@ x.onreadystatechange = function (aEvt) {
      if(x.status == 200) {
       dump(x.responseText);
       console.log("READY");
+      goo();
      } else {
       dump("Error loading page\n");
      }
@@ -106,11 +107,10 @@ x.onreadystatechange = function (aEvt) {
 x.send(null); 
 }
 
-
-
-
 rqr(req,xy);
 
+
+function goo(){
 var json = req.responseText,
     obj = JSON.parse(json);
 
@@ -119,6 +119,7 @@ console.log(obj.data.after);
 z1 = 'http://www.reddit.com/r/'+subred+'/hot.json?limit=100&after='+obj.data.after+'';
 
 rqr(req1,z1);
+}
 
 var json1 = req1.responseText,
     obj1 = JSON.parse(json1);
