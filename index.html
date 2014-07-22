@@ -8,8 +8,6 @@ img{box-shadow:0px 1px 200px -1px #444;position:absolute;margin:auto;left:0;righ
 #load{box-shadow:0 0 0 0 #000;width:40px;height:40px;opacity:0.4}
 #title{position:absolute;top:0;left:40px;z-index:1000;color:white;font-family:Arial;font-size:15px;text-shadow:0 0 1px #000;}
 #legend{text-align:justify;position:absolute;bottom:0;left:0;right:0;margin:auto;width:60%;z-index:1000;color:white;font-family:Arial;font-size:3px;text-shadow:0 0 1px #000;}
-#legend:hover{font-size:12px;background:black;opacity:0.8;transition:0.5s ease;padding:20px;}
-span:hover{color:red}
 form{position:absolute;left:40px;top:25px;z-index:2000}
 form input{background:black;color:white;border:1px solid white;border-radius:5px;width:50px;text-align:center;}
 
@@ -27,17 +25,11 @@ if (key==13){
 e.preventDefault();
   i = form.num.value-1
       next();
-
 }
 }
 </script>
-
-
-<SCRIPT Language="JavaScript">
+<script ="JavaScript">
 <!--//
-
-
-
 function chng(frm){
   if (frm.num.value == "")
       alert("nothing == Nothing")
@@ -100,11 +92,21 @@ if (subred!=null)
 
 
 function rqr(x,y){
-x.open('GET', y, false); 
+x.open('GET', y, true); 
 x.send(null);
-if(x.status == 0)
-dump(x.responseText);
+x.onreadystatechange = function (aEvt) {
+  if (x.readyState == 4) {
+     if(x.status == 200)
+      dump(x.responseText);
+     else
+      dump("Error loading page\n");
+  }
+};
+x.send(null); 
 }
+
+
+
 
 rqr(req,xy);
 
@@ -135,13 +137,6 @@ var json3 = req3.responseText,
     obj3 = JSON.parse(json3);
 
 
-// function cleanUp(url) {
-//    if(url.search(/^https?\:\/\//) != -1)
-//        url = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i, "");
-//    else
- //       url = url.match(/^([^\/?#]+)(?:[\/?#]|$)/i, "");
-//    return url[1];
-//}
 
 var imgs = {};
 var titles = {};
@@ -153,19 +148,8 @@ function imgCheck(x,i){
     if (check == true){
         imgs[j] = x.data.children[i].data.url;
         titles[j] = x.data.children[i].data.title
-     // legend.innerHTML+='<span id="r'+j+'">'+j+' </span>'
         j+=1;
     }
-   // else{   
-  //  if (cleanUp(cII)=="imgur.com" || cleanUp(cII)=="i.imgur.com"){console.log(cleanUp(cII));
-    
-  //  imgs[j] = x.data.children[i].data.url+'.jpg';
-  //  titles[j] = x.data.children[i].data.title
-  //  legend.innerHTML+='<span id="r'+j+'">'+j+' </span>'
-  //  j+=1;
-    
-  //  }
-  //  } 
 }
 
 for (i in obj.data.children){
