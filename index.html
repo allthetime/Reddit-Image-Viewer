@@ -95,11 +95,12 @@ function rqr(x,y){
 x.open('GET', y, true); 
 x.onreadystatechange = function (aEvt) {
   if (x.readyState == 4) {
-     if(x.status == 200)
+     if(x.status == 200) {
       dump(x.responseText);
       console.log("READY");
-     else
+     } else {
       dump("Error loading page\n");
+     }
   }
 };
 x.send(null); 
