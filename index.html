@@ -93,7 +93,6 @@ if (subred!=null)
 
 function rqr(x,y){
 x.open('GET', y, true); 
-x.send(null);
 x.onreadystatechange = function (aEvt) {
   if (x.readyState == 4) {
      if(x.status == 200)
